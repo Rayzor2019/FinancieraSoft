@@ -14,6 +14,11 @@ namespace FinancieraSoft.CapaDominio.Entidades
         private DateTime fechaPago;
         private double amortizacion;
         private double interes;
+        private DateTime fechaLimite;
+        private int diasMora;
+        private double mora;
+        private double montoTotal;
+        private string estado;
 
         public double Amortizacion { get => amortizacion; set => amortizacion = value; }
         public string CuotaID { get => cuotaID; set => cuotaID = value; }
@@ -21,6 +26,13 @@ namespace FinancieraSoft.CapaDominio.Entidades
         public double Interes { get => interes; set => interes = value; }
         public double Saldo { get => saldo; set => saldo = value; }
         public int Periodo { get => periodo; set => periodo = value; }
+        public DateTime FechaLimite { get => fechaLimite; set => fechaLimite = value; }
+        public int DiasMora { get => diasMora; set => diasMora = value; }
+        public double Mora { get => mora; set => mora = value; }
+        public double MontoTotal { get => montoTotal; set => montoTotal = value; }
+
+        public string Estado { get => estado; set => estado = value; }
+        
 
         public Cuota(Prestamo prestamo, int periodo, double saldo, DateTime fechaPago, double amortizacion, double interes)
         {
@@ -30,6 +42,8 @@ namespace FinancieraSoft.CapaDominio.Entidades
             this.fechaPago = fechaPago;
             this.amortizacion = amortizacion;
             this.interes = interes;
+            fechaLimite = fechaPago.AddDays(10);
+            estado = "Pendiente";
         }
 
         public List<Cuota> ListaCuotas(Prestamo prestamo)
@@ -70,6 +84,20 @@ namespace FinancieraSoft.CapaDominio.Entidades
             return saldoAnterior - amortizacion;
         }
 
+        public int CalcularDiasMora()
+        {
+            TimeSpan t = DateTime.Now - fechaLimite;
+            return t.Days;
+        }
 
+        public double CalcularMora(Prestamo prestamo)
+        {
+            return diasMora * (prestamo.CuotaFijaMensual * 0.05);
+        }
+
+        public double CalcularMontoTotal(Prestamo prestamo)
+        {
+            return prestamo.CuotaFijaMensual + mora;
+        }
     }
 }
