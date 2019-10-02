@@ -8,29 +8,52 @@ namespace FinancieraSoft.CapaDominio.Entidades
 {
     public class Pago
     {
-        private float montoAPagar;
-        private float montoRecibido;
         private string pagoID;
-        private float vuelto;
+        private int diasMora;
+        private double mora;
+        private double montoTotal;
+        private double montoRecibido;
+        private double vuelto;
+        private Cuota cuota;
 
-        public float MontoAPagar { get => montoAPagar; set => montoAPagar = value; }
-        public float MontoRecibido { get => montoRecibido; set => montoRecibido = value; }
         public string PagoID { get => pagoID; set => pagoID = value; }
-        public float Vuelto { get => vuelto; set => vuelto = value; }
+        public int DiasMora { get => diasMora; set => diasMora = value; }
+        public double Mora { get => mora; set => mora = value; }
+        public double MontoTotal { get => montoTotal; set => montoTotal = value; }
+        public double MontoRecibido { get => montoRecibido; set => montoRecibido = value; }
+        public double Vuelto { get => vuelto; set => vuelto = value; }
+        public Cuota Cuota { get => cuota; set => cuota = value; }
 
-        public Pago(Cuota cuota, float montoRecibido)
+        public Pago(Cuota cuota, string pagoID, int diasMora, double mora, double montoTotal, double montoRecibido, double vuelto)
         {
-            pagoID = cuota.CuotaID;
-            montoAPagar = (float)cuota.MontoTotal;
+            this.pagoID = pagoID;
+            this.diasMora = diasMora;
+            this.mora = mora;
+            this.montoTotal = montoTotal;
             this.montoRecibido = montoRecibido;
-            if (ValidarVuelto(CalcularVuelto(montoAPagar, montoRecibido)))
-                vuelto = CalcularVuelto(montoAPagar, montoRecibido);
-            cuota.Estado = "Pagado";
+            this.vuelto = vuelto;
+            this.cuota = cuota;
         }
 
-        public float CalcularVuelto (float montoTotal, float montoRecibido)
+        public int CalcularDiasMora()
         {
-            return (montoRecibido - montoTotal);
+            TimeSpan t = DateTime.Now - cuota.FechaLimite;
+            return t.Days;
+        }
+
+        public double CalcularMora()
+        {
+            return DiasMora * (cuota.Prestamo.CuotaFijaMensual* 0.05);
+        }
+
+        public double CalcularMontoTotal()
+        {
+            return cuota.Prestamo.CuotaFijaMensual + Mora;
+        }
+
+        public double CalcularVuelto ()
+        {
+            return (MontoRecibido - CalcularMontoTotal());
         }
         public bool ValidarVuelto (float vuelto)
         {

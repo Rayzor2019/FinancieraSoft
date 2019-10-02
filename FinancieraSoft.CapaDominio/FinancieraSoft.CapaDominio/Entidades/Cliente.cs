@@ -18,9 +18,9 @@ namespace FinancieraSoft.CapaDominio.Entidades
         public string Dni { get => dni; set => dni = value; }
         public string Nombres { get => nombres; set => nombres = value; }
 
-        public Cliente(string dni, string apellidos, string nombres)
+        public Cliente(string codigo, string dni, string apellidos, string nombres)
         {
-            this.codigo = "AX20" + dni;
+            this.codigo = codigo;
             this.dni = dni;
             this.apellidos = apellidos;
             this.nombres = nombres;
