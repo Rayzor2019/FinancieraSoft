@@ -8,7 +8,7 @@ using System.Data;
 
 namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
 {
-    class GestorSql
+    class GestorSQL
     {
         private SqlConnection conexion;
         private SqlTransaction transaccion;

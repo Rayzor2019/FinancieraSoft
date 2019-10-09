@@ -41,13 +41,9 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
         public Cliente obtenerCliente(SqlDataReader resultadoSQL)
         {
             Cliente cliente = new Cliente();
-            cliente.IdCliente = resultadoSQL.GetString(0);
-            cliente.Nombre = resultadoSQL.GetString(1);
-            cliente.Dni = resultadoSQL.GetString(2);
-            cliente.ApellidoPaterno = resultadoSQL.GetString(3);
-            cliente.ApellidoMaterno = resultadoSQL.GetString(4);
-            cliente.FechaNacimiento = resultadoSQL.GetDateTime(5);
-            cliente.Telefono = resultadoSQL.GetString(6);
+            cliente.Codigo = resultadoSQL.GetString(0);
+            cliente.Apellidos = resultadoSQL.GetString(1);
+            cliente.Nombres = resultadoSQL.GetString(2);
             return cliente;
         }
 

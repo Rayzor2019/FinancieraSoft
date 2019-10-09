@@ -18,32 +18,5 @@ namespace FinancieraSoft.CapaDominio.Entidades
         public string Dni { get => dni; set => dni = value; }
         public string Nombres { get => nombres; set => nombres = value; }
 
-        public Cliente(string codigo, string dni, string apellidos, string nombres)
-        {
-            this.codigo = codigo;
-            this.dni = dni;
-            this.apellidos = apellidos;
-            this.nombres = nombres;
-        }
-
-        /* Ejemplo Consola
-        public Cliente()
-        {
-            Console.Write("Ingrese dni: ");
-            dni = Console.ReadLine();
-            Console.Write("Ingrese apellidos: ");
-            apellidos = Console.ReadLine();
-            Console.Write("Ingrese nombres: ");
-            nombres = Console.ReadLine();
-            codigo = dni + "AX20";
-        }
-        
-        public void Imprimir()
-        {
-            Console.WriteLine("Codigo: " + codigo);
-            Console.WriteLine("Apellidos: " + apellidos);
-            Console.WriteLine("Nombres: " + nombres);
-        }
-        */
     }
 }

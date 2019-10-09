@@ -4,3 +4,7 @@ C:\Users\Rayzor\Documents\DIARS\FinancieraSoft\FinancieraSoft.CapaDominio\Financ
 C:\Users\Rayzor\Documents\DIARS\FinancieraSoft\FinancieraSoft.CapaDominio\FinancieraSoft.CapaDominio\bin\Debug\FinancieraSoft.CapaDominio.pdb
 C:\Users\Rayzor\Documents\DIARS\FinancieraSoft\FinancieraSoft.CapaDominio\FinancieraSoft.CapaDominio\obj\Debug\FinancieraSoft.CapaDominio.dll
 C:\Users\Rayzor\Documents\DIARS\FinancieraSoft\FinancieraSoft.CapaDominio\FinancieraSoft.CapaDominio\obj\Debug\FinancieraSoft.CapaDominio.pdb
+D:\FinancieraSoft\FinancieraSoft.CapaDominio\FinancieraSoft.CapaDominio\obj\Debug\FinancieraSoft.CapaDominio.csprojAssemblyReference.cache
+D:\FinancieraSoft\FinancieraSoft.CapaDominio\FinancieraSoft.CapaDominio\obj\Debug\FinancieraSoft.CapaDominio.csproj.CoreCompileInputs.cache
+D:\FinancieraSoft\FinancieraSoft.CapaDominio\FinancieraSoft.CapaDominio\obj\Debug\FinancieraSoft.CapaDominio.dll
+D:\FinancieraSoft\FinancieraSoft.CapaDominio\FinancieraSoft.CapaDominio\obj\Debug\FinancieraSoft.CapaDominio.pdb

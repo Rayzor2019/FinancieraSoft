@@ -47,5 +47,11 @@
     <Compile Include="SQLServerDAO\PagoDAO.cs" />
     <Compile Include="SQLServerDAO\PrestamoDAO.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\FinancieraSoft.CapaDominio\FinancieraSoft.CapaDominio\FinancieraSoft.CapaDominio.csproj">
+      <Project>{369b10e1-8a39-4643-8dd1-508a1bf0453d}</Project>
+      <Name>FinancieraSoft.CapaDominio</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

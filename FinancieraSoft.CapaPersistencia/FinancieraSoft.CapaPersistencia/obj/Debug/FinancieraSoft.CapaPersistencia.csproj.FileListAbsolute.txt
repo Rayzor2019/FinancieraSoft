@@ -1,0 +1,2 @@
+D:\FinancieraSoft\FinancieraSoft.CapaPersistencia\FinancieraSoft.CapaPersistencia\obj\Debug\FinancieraSoft.CapaPersistencia.csprojAssemblyReference.cache
+D:\FinancieraSoft\FinancieraSoft.CapaPersistencia\FinancieraSoft.CapaPersistencia\obj\Debug\FinancieraSoft.CapaPersistencia.csproj.CoreCompileInputs.cache
