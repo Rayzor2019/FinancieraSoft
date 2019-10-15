@@ -15,6 +15,7 @@ namespace FinancieraSoft.CapaDominio.Entidades
         private double montoRecibido;
         private double vuelto;
         private Cuota cuota;
+        private Prestamo prestamo;
 
         public string PagoID { get => pagoID; set => pagoID = value; }
         public int DiasMora { get => diasMora; set => diasMora = value; }
@@ -23,6 +24,7 @@ namespace FinancieraSoft.CapaDominio.Entidades
         public double MontoRecibido { get => montoRecibido; set => montoRecibido = value; }
         public double Vuelto { get => vuelto; set => vuelto = value; }
         public Cuota Cuota { get => cuota; set => cuota = value; }
+        public Prestamo Prestamo { get => prestamo; set => prestamo = value; }
 
         public Pago(Cuota cuota, string pagoID, int diasMora, double mora, double montoTotal, double montoRecibido, double vuelto)
         {
@@ -38,17 +40,20 @@ namespace FinancieraSoft.CapaDominio.Entidades
         public int CalcularDiasMora()
         {
             TimeSpan t = DateTime.Now - cuota.FechaLimite;
-            return t.Days;
+            if (t.Days < 0)
+                return 0;
+            else
+                return t.Days;
         }
 
         public double CalcularMora()
         {
-            return DiasMora * (cuota.Prestamo.CuotaFijaMensual* 0.05);
+            return DiasMora * (prestamo.CuotaFijaMensual* 0.05);
         }
 
         public double CalcularMontoTotal()
         {
-            return cuota.Prestamo.CuotaFijaMensual + Mora;
+            return prestamo.CuotaFijaMensual + Mora;
         }
 
         public double CalcularVuelto ()
