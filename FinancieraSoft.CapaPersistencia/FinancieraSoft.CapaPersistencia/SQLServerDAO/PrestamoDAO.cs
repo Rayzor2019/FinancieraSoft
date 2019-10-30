@@ -59,6 +59,7 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             {
                 throw new Exception("Ocurrio un problema al intentar guardar.", err);
             }
+
         }
 
         public Prestamo buscarPrestamo(Cliente cliente)
