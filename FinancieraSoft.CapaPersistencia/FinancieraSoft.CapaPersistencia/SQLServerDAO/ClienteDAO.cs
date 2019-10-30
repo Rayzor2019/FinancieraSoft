@@ -46,6 +46,5 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             cliente.Nombres = resultadoSQL.GetString(2);
             return cliente;
         }
-
     }
 }

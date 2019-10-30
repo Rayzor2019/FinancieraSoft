@@ -10,59 +10,40 @@ namespace FinancieraSoft.CapaDominio.Entidades
     {
         private string pagoID;
         private int diasMora;
-        private double mora;
         private double montoTotal;
-        private double montoRecibido;
-        private double vuelto;
         private Cuota cuota;
-        private Prestamo prestamo;
 
         public string PagoID { get => pagoID; set => pagoID = value; }
         public int DiasMora { get => diasMora; set => diasMora = value; }
-        public double Mora { get => mora; set => mora = value; }
         public double MontoTotal { get => montoTotal; set => montoTotal = value; }
-        public double MontoRecibido { get => montoRecibido; set => montoRecibido = value; }
-        public double Vuelto { get => vuelto; set => vuelto = value; }
         public Cuota Cuota { get => cuota; set => cuota = value; }
-        public Prestamo Prestamo { get => prestamo; set => prestamo = value; }
 
-        public Pago(Cuota cuota, string pagoID, int diasMora, double mora, double montoTotal, double montoRecibido, double vuelto)
+        public Pago(Cuota cuota)
         {
-            this.pagoID = pagoID;
-            this.diasMora = diasMora;
-            this.mora = mora;
-            this.montoTotal = montoTotal;
-            this.montoRecibido = montoRecibido;
-            this.vuelto = vuelto;
-            this.cuota = cuota;
+            //this.pagoID = pagoID; Autogenerar
+            diasMora = calcularDiasMora();
+            montoTotal = calcularMontoTotal();
+            this.Cuota = cuota;
         }
 
-        public int CalcularDiasMora()
+        public int calcularDiasMora()
         {
-            TimeSpan t = DateTime.Now - cuota.FechaLimite;
-            if (t.Days < 0)
+            TimeSpan tiempoDeMora = DateTime.Now - Cuota.FechaLimite;
+            if (tiempoDeMora.Days <= 0)
                 return 0;
             else
-                return t.Days;
+                return tiempoDeMora.Days;
         }
 
-        public double CalcularMora()
+        public double calcularMontoTotal()
         {
-            return DiasMora * (prestamo.CuotaFijaMensual* 0.05);
+            return Cuota.Prestamo.CuotaFijaMensual 
+                 + diasMora * (Cuota.Prestamo.CuotaFijaMensual * 0.05);
         }
 
-        public double CalcularMontoTotal()
+        public double calcularVuelto (double montoRecibido)
         {
-            return prestamo.CuotaFijaMensual + Mora;
-        }
-
-        public double CalcularVuelto ()
-        {
-            return (MontoRecibido - CalcularMontoTotal());
-        }
-        public bool ValidarVuelto (float vuelto)
-        {
-            return (vuelto > 0);
+            return (montoRecibido - calcularMontoTotal());
         }
     }
 }

@@ -9,7 +9,7 @@ namespace FinancieraSoft.CapaDominio.Entidades
     public class Prestamo
     {
         private string prestamoID;
-        private float montoPrestado;
+        private double montoPrestado;
         private double tasaEfectivaAnual;
         private int totalPeriodosPago;
         private double tasaEfectivaMensual;
@@ -19,7 +19,7 @@ namespace FinancieraSoft.CapaDominio.Entidades
         private List<Cuota> listaCuotas;
 
         public string PrestamoID { get => prestamoID; set => prestamoID = value; }
-        public float MontoPrestado { get => montoPrestado; set => montoPrestado = value; }
+        public double MontoPrestado { get => montoPrestado; set => montoPrestado = value; }
         public double TasaEfectivaAnual { get => tasaEfectivaAnual; set => tasaEfectivaAnual = value; }
         public int TotalPeriodosPago { get => totalPeriodosPago; set => totalPeriodosPago = value; }
         public double TasaEfectivaMensual { get => tasaEfectivaMensual; set => tasaEfectivaMensual = value; }
@@ -28,31 +28,37 @@ namespace FinancieraSoft.CapaDominio.Entidades
         public Cliente Cliente { get => cliente; set => cliente = value; }
         public List<Cuota> ListaCuotas { get => listaCuotas; set => listaCuotas = value; }
 
-        public Prestamo(Cliente cliente, float montoPrestado, double tasaEfectivaAnual, int totalPeriodosPago, DateTime fechaPrestamo)
-        {
-            this.Cliente = cliente;
-            this.MontoPrestado = montoPrestado;
-            this.TasaEfectivaAnual = tasaEfectivaAnual;
-            this.TotalPeriodosPago = totalPeriodosPago;
-            this.fechaPrestamo = fechaPrestamo;
-            List<Cuota> cuotas = new List<Cuota>();
-        }
+        //Constructor de crear un prestamo
 
-        public Prestamo(Cliente cliente, string prestamoID, float montoPrestado, double tasaEfectivaAnual, int totalPeriodosPago, double tasaEfectivaMensual, double cuotaFijaMensual, DateTime fechaPrestamo)
+        public Prestamo(double montoPrestado, double tasaEfectivaAnual, int totalPeriodosPago, Cliente cliente)
         {
-            this.Cliente = cliente;
-            this.MontoPrestado = montoPrestado;
-            this.PrestamoID = prestamoID;
-            this.TasaEfectivaAnual = tasaEfectivaAnual;
-            this.TasaEfectivaMensual = tasaEfectivaMensual;
-            this.TotalPeriodosPago = totalPeriodosPago;
-            this.CuotaFijaMensual = cuotaFijaMensual;
-            this.fechaPrestamo = fechaPrestamo;
-        }
-
-        public void GenerarCronograma ()
-        {
+            //prestamoID = prestamoID; Autogenerar (con un metodo)
+            this.montoPrestado = montoPrestado;
+            this.tasaEfectivaAnual = tasaEfectivaAnual;
+            this.totalPeriodosPago = totalPeriodosPago;
+            this.cliente = cliente;
             fechaPrestamo = DateTime.Now;
+            tasaEfectivaMensual = calcularTasaEfectivaMensual();
+            cuotaFijaMensual = calcularCuotaFijaMensual();
+            listaCuotas = new List<Cuota>();
+        }
+
+        //Constructor de obtener un prestamo
+        public Prestamo(string prestamoID, double montoPrestado, double tasaEfectivaAnual, int totalPeriodosPago, double tasaEfectivaMensual, DateTime fechaPrestamo, double cuotaFijaMensual, Cliente cliente, List<Cuota> listaCuotas)
+        {
+            this.prestamoID = prestamoID;
+            this.montoPrestado = montoPrestado;
+            this.tasaEfectivaAnual = tasaEfectivaAnual;
+            this.totalPeriodosPago = totalPeriodosPago;
+            this.tasaEfectivaMensual = tasaEfectivaMensual;
+            this.fechaPrestamo = fechaPrestamo;
+            this.cuotaFijaMensual = cuotaFijaMensual;
+            this.cliente = cliente;
+            this.listaCuotas = listaCuotas;
+        }
+
+        public void generarCronograma ()
+        {
             DateTime fecha;
             double saldo;
             double interes;
@@ -60,51 +66,57 @@ namespace FinancieraSoft.CapaDominio.Entidades
 
             for (int i = 1; i <= totalPeriodosPago; i++)
             {
-                interes = CalcularInteres();
-                amortizacion = CalcularAmortizacion();
-                saldo = CalcularSaldo();
+                interes = calcularInteres();
+                amortizacion = calcularAmortizacion();
+                saldo = calcularSaldo();
                 fecha = fechaPrestamo.AddMonths(i);
-                Cuota cuota = new Cuota(i, saldo, fecha, amortizacion, interes);
-                AgregarCuota(cuota);
+                Cuota cuota = new Cuota(i, saldo, fecha, amortizacion, interes, this);
+                agregarCuota(cuota);
             }
         }
 
-        public void AgregarCuota(Cuota cuota)
+        public void agregarCuota(Cuota cuota)
         {
             listaCuotas.Add(cuota);
         }
 
-        public bool ValidarMontoPrestado(float montoPrestado)
+        public bool validarMontoPrestado(double montoPrestado)
         {
             return (montoPrestado >= 1000 && montoPrestado <= 30000);
         }
 
-        public bool ValidarTasaEfectivaAnual(double tasaEfectivaAnual)
+        public bool validarTasaEfectivaAnual(double tasaEfectivaAnual)
         {
             return (tasaEfectivaAnual >= 0.1 && tasaEfectivaAnual <= 0.20);
         }
 
-        public bool ValidarTotalPeriodosPago(int totalPeriodosPago)
+        public bool validarTotalPeriodosPago(int totalPeriodosPago)
         {
             return (totalPeriodosPago >= 3 && totalPeriodosPago <= 24);
         }
-        public double CalcularTasaEfectivaMensual()
+
+        //calcularTEM antiguo, ver en consola si arroja el mismo resultado con el update
+        /*
+        public double calcularTasaEfectivaMensual()
         {
-            double numero = 1 + tasaEfectivaAnual;
+            double numero = (1 + tasaEfectivaAnual);
             decimal exponente = 1 / 12M;
             double a = Math.Pow(numero, (double)exponente);
             return a - 1;
-        }
-        public double CalcularCuotaFijaMensual()
+        }*/
+
+        public double calcularTasaEfectivaMensual()
         {
-            double tem = CalcularTasaEfectivaMensual();
-            double n = totalPeriodosPago * -1;
-            double dividendo = tem * montoPrestado;
-            double divisor = 1 - Math.Pow(1 + tem, n);
-            return dividendo / divisor;
+            return Math.Pow((1 + tasaEfectivaAnual), (double)(1 / 12M)) - 1;
         }
 
-        public double ObtenerSaldoAnterior()
+        public double calcularCuotaFijaMensual()
+        {
+            return (calcularTasaEfectivaMensual() * montoPrestado) 
+                 / (1 - Math.Pow(1 + calcularTasaEfectivaMensual(), (totalPeriodosPago * -1)));
+        }
+
+        public double obtenerUltimoSaldo()
         {
             if (listaCuotas.Count==0)
                 return montoPrestado;
@@ -114,19 +126,19 @@ namespace FinancieraSoft.CapaDominio.Entidades
             }
         }
 
-        public double CalcularInteres()
+        public double calcularInteres()
         {
-            return ObtenerSaldoAnterior() * tasaEfectivaMensual;
+            return obtenerUltimoSaldo() * tasaEfectivaMensual;
         }
 
-        public double CalcularAmortizacion()
+        public double calcularAmortizacion()
         {
-            return CalcularCuotaFijaMensual() - CalcularInteres();
+            return calcularCuotaFijaMensual() - calcularInteres();
         }
 
-        public double CalcularSaldo()
+        public double calcularSaldo()
         {
-            return ObtenerSaldoAnterior() - CalcularAmortizacion();
+            return obtenerUltimoSaldo() - calcularAmortizacion();
         }
     }
 }
