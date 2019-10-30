@@ -160,5 +160,6 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
 
             return cuota;
         }
+
     }
 }
