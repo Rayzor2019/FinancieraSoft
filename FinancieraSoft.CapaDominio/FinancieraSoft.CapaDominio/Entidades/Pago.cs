@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FinancieraSoft.CapaDominio.Entidades.EstrategiaMora;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,18 +13,21 @@ namespace FinancieraSoft.CapaDominio.Entidades
         private int diasMora;
         private double montoTotal;
         private Cuota cuota;
+        private IEstrategiaMora estrategiaMora;
 
         public string PagoID { get => pagoID; set => pagoID = value; }
         public int DiasMora { get => diasMora; set => diasMora = value; }
         public double MontoTotal { get => montoTotal; set => montoTotal = value; }
         public Cuota Cuota { get => cuota; set => cuota = value; }
+        public IEstrategiaMora EstrategiaMora { get => estrategiaMora; set => estrategiaMora = value; }
 
-        public Pago(Cuota cuota)
+        public Pago(Cuota cuota, IEstrategiaMora estrategiaMora)
         {
             //this.pagoID = pagoID; Autogenerar
             diasMora = CalcularDiasMora();
             montoTotal = CalcularMontoTotal();
-            this.Cuota = cuota;
+            this.cuota = cuota;
+            this.estrategiaMora = estrategiaMora;
         }
 
         //REGLAS DE NEGOCIO
@@ -43,7 +47,7 @@ namespace FinancieraSoft.CapaDominio.Entidades
 
         public double CalcularMora()
         {
-            return diasMora * (Cuota.Prestamo.CuotaFijaMensual * 0.05);
+            return estrategiaMora.CalcularMora(this);
         }
 
         //REGLA 4 - El cálculo del monto total a pagar se realizará con la formula 
