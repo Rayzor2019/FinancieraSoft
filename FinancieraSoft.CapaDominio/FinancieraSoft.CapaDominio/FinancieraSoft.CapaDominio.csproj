@@ -46,10 +46,11 @@
     <Compile Include="Entidades\Pago.cs" />
     <Compile Include="Entidades\Prestamo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Servicios\PagoServicio.cs" />
+    <Compile Include="Servicios\PrestamoServicio.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Contratos\" />
-    <Folder Include="Servicios\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

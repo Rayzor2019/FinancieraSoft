@@ -38,8 +38,8 @@ namespace FinancieraSoft.CapaDominio.Entidades
             this.totalPeriodosPago = totalPeriodosPago;
             this.cliente = cliente;
             fechaPrestamo = DateTime.Now;
-            tasaEfectivaMensual = calcularTasaEfectivaMensual();
-            cuotaFijaMensual = calcularCuotaFijaMensual();
+            tasaEfectivaMensual = CalcularTasaEfectivaMensual();
+            cuotaFijaMensual = CalcularCuotaFijaMensual();
             listaCuotas = new List<Cuota>();
         }
 
@@ -57,7 +57,7 @@ namespace FinancieraSoft.CapaDominio.Entidades
             this.listaCuotas = listaCuotas;
         }
 
-        public void generarCronograma ()
+        public void GenerarCronograma ()
         {
             DateTime fecha;
             double saldo;
@@ -66,38 +66,49 @@ namespace FinancieraSoft.CapaDominio.Entidades
 
             for (int i = 1; i <= totalPeriodosPago; i++)
             {
-                interes = calcularInteres();
-                amortizacion = calcularAmortizacion();
-                saldo = calcularSaldo();
+                interes = CalcularInteres();
+                amortizacion = CalcularAmortizacion();
+                saldo = CalcularSaldo();
                 fecha = fechaPrestamo.AddMonths(i);
                 Cuota cuota = new Cuota(i, saldo, fecha, amortizacion, interes, this);
-                agregarCuota(cuota);
+                AgregarCuota(cuota);
             }
         }
 
-        public void agregarCuota(Cuota cuota)
+        public void AgregarCuota(Cuota cuota)
         {
             listaCuotas.Add(cuota);
         }
 
-        public bool validarMontoPrestado(double montoPrestado)
+        //REGLAS DE NEGOCIO
+
+        //REGLA 2 - El monto prestado debe ser mayor o igual a 10000 y menor o igual a 30000
+        public bool TieneMontoPrestadoValido()
         {
             return (montoPrestado >= 1000 && montoPrestado <= 30000);
         }
 
-        public bool validarTasaEfectivaAnual(double tasaEfectivaAnual)
+        //REGLA 3 - La TEA debe ser mayor o igual a 0.10 y menor o igual a 0.20 
+        public bool TieneTasaEfectivaAnualValido()
         {
-            return (tasaEfectivaAnual >= 0.1 && tasaEfectivaAnual <= 0.20);
+            return (tasaEfectivaAnual >= 0.10 && tasaEfectivaAnual <= 0.20);
         }
 
-        public bool validarTotalPeriodosPago(int totalPeriodosPago)
+        //REGLA 4 - El total de periodos de pago tiene que ser mayor o igual a 3 y menor o igual a 24
+        public bool TieneTotalPeriodosPagoValido()
         {
             return (totalPeriodosPago >= 3 && totalPeriodosPago <= 24);
         }
 
-        //calcularTEM antiguo, ver en consola si arroja el mismo resultado con el update
+        //REGLA 5 -  La TEM se calcula mediante la formula: i = (1+TEA)^(1/12)-1
+
+            /* Donde:
+             * i = TEM
+             * TEA = Tasa Efectiva Anual /*
+
+        //CalcularTEM antiguo, ver en consola si arroja el mismo resultado con el update descartar
         /*
-        public double calcularTasaEfectivaMensual()
+        public double CalcularTasaEfectivaMensual()
         {
             double numero = (1 + tasaEfectivaAnual);
             decimal exponente = 1 / 12M;
@@ -105,18 +116,27 @@ namespace FinancieraSoft.CapaDominio.Entidades
             return a - 1;
         }*/
 
-        public double calcularTasaEfectivaMensual()
+        public double CalcularTasaEfectivaMensual()
         {
             return Math.Pow((1 + tasaEfectivaAnual), (double)(1 / 12M)) - 1;
         }
 
-        public double calcularCuotaFijaMensual()
+        //REGLA 6 - La cuota fija mensual (A) : P = (A/i)*[1-(1+i)^-n] Se debe despejar A
+
+            /*Donde:
+             * P = MontoPrestado
+             * i = TasaEfectivaMensual
+             * n = total de Periodos de Pago */
+
+        public double CalcularCuotaFijaMensual()
         {
-            return (calcularTasaEfectivaMensual() * montoPrestado) 
-                 / (1 - Math.Pow(1 + calcularTasaEfectivaMensual(), (totalPeriodosPago * -1)));
+            return (CalcularTasaEfectivaMensual() * montoPrestado) 
+                 / (1 - Math.Pow(1 + CalcularTasaEfectivaMensual(), (totalPeriodosPago * -1)));
         }
 
-        public double obtenerUltimoSaldo()
+        //REGLA 7 - Calcular Interes: Saldo del periodo anterior * i
+            //Instanciamos un método para obtener el ultimo saldo
+        public double ObtenerUltimoSaldo()
         {
             if (listaCuotas.Count==0)
                 return montoPrestado;
@@ -125,20 +145,22 @@ namespace FinancieraSoft.CapaDominio.Entidades
                 return listaCuotas.Last().Saldo;
             }
         }
-
-        public double calcularInteres()
+        
+        public double CalcularInteres()
         {
-            return obtenerUltimoSaldo() * tasaEfectivaMensual;
+            return ObtenerUltimoSaldo() * tasaEfectivaMensual;
         }
 
-        public double calcularAmortizacion()
+        //REGLA 8 - Amortizacion = A - interés
+        public double CalcularAmortizacion()
         {
-            return calcularCuotaFijaMensual() - calcularInteres();
+            return CalcularCuotaFijaMensual() - CalcularInteres();
         }
 
-        public double calcularSaldo()
+        //REGLA 9 - Saldo = Saldo del periodo anterior - Amortizacion
+        public double CalcularSaldo()
         {
-            return obtenerUltimoSaldo() - calcularAmortizacion();
+            return ObtenerUltimoSaldo() - CalcularAmortizacion();
         }
     }
 }

@@ -54,6 +54,9 @@ namespace FinancieraSoft.CapaDominio.Entidades
             this.estado = estado;
         }
 
+        //REGLAS DE NEGOCIO
+
+        //REGLA 1 - La fecha limite es de 10 días a partir de la Fecha de pago que se muestra en el cronograma
         public DateTime CalcularFechaLimite()
         {
             return fecha.AddDays(10);

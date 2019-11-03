@@ -21,12 +21,15 @@ namespace FinancieraSoft.CapaDominio.Entidades
         public Pago(Cuota cuota)
         {
             //this.pagoID = pagoID; Autogenerar
-            diasMora = calcularDiasMora();
-            montoTotal = calcularMontoTotal();
+            diasMora = CalcularDiasMora();
+            montoTotal = CalcularMontoTotal();
             this.Cuota = cuota;
         }
 
-        public int calcularDiasMora()
+        //REGLAS DE NEGOCIO
+        //REGLA 1 - Implementada en Cuota.cs
+        //REGLA 2 - El total de días de mora se calcula con la siguiente fórmula [DiasMora=FechaActual-FechaLimite].
+        public int CalcularDiasMora()
         {
             TimeSpan tiempoDeMora = DateTime.Now - Cuota.FechaLimite;
             if (tiempoDeMora.Days <= 0)
@@ -35,15 +38,25 @@ namespace FinancieraSoft.CapaDominio.Entidades
                 return tiempoDeMora.Days;
         }
 
-        public double calcularMontoTotal()
+        //REGLA 3 - 3: Si la fecha actual excede a la fecha limite de pago de la cuota pendiente, entonces se
+                     //aumentará el 0.5% de la cuota por día
+
+        public double CalcularMora()
         {
-            return Cuota.Prestamo.CuotaFijaMensual 
-                 + diasMora * (Cuota.Prestamo.CuotaFijaMensual * 0.05);
+            return diasMora * (Cuota.Prestamo.CuotaFijaMensual * 0.05);
         }
 
-        public double calcularVuelto (double montoRecibido)
+        //REGLA 4 - El cálculo del monto total a pagar se realizará con la formula 
+                  //[MontoCalculadoTotal = MontoCuota + MontoMora].
+        public double CalcularMontoTotal()
         {
-            return (montoRecibido - calcularMontoTotal());
+            return Cuota.Prestamo.CuotaFijaMensual + CalcularMora();
+        }
+
+        //REGLA 5 - El vuelto se calculará con la fórmula: [Vuelto=MontoIngresado – MontoCalculadoTotal]
+        public double CalcularVuelto (double montoRecibido)
+        {
+            return (montoRecibido - CalcularMontoTotal());
         }
     }
 }
