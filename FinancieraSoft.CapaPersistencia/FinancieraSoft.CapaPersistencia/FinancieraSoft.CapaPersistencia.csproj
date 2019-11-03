@@ -43,7 +43,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQLServerDAO\ClienteDAO.cs" />
-    <Compile Include="SQLServerDAO\GestorSql.cs" />
+    <Compile Include="SQLServerDAO\GestorSQL.cs" />
     <Compile Include="SQLServerDAO\PagoDAO.cs" />
     <Compile Include="SQLServerDAO\PrestamoDAO.cs" />
   </ItemGroup>

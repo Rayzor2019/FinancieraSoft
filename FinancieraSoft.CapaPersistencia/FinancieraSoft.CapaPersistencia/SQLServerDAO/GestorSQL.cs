@@ -8,12 +8,12 @@ using System.Data;
 
 namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
 {
-    class GestorSQL
+    public class GestorSQL
     {
         private SqlConnection conexion;
         private SqlTransaction transaccion;
 
-        public void abrirConexion()
+        public void AbrirConexion()
         {
             try
             {
@@ -28,7 +28,7 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
 
         }
 
-        public void cerrarConexion()
+        public void CerrarConexion()
         {
             try
             {
@@ -36,25 +36,25 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             }
             catch (Exception err)
             {
-                throw new Exception("Error al cerrar la conexión con la Base de Datos.", err);
+                throw new Exception("Error al Cerrar la conexión con la Base de Datos.", err);
             }
 
         }
 
-        public void iniciarTransaccion()
+        public void IniciarTransaccion()
         {
             try
             {
-                abrirConexion();
+                AbrirConexion();
                 transaccion = conexion.BeginTransaction();
             }
             catch (Exception err)
             {
-                throw new Exception("Error al iniciar la transacción con la Base de Datos.", err);
+                throw new Exception("Error al Iniciar la transacción con la Base de Datos.", err);
             }
         }
 
-        public void terminarTransaccion()
+        public void TerminarTransaccion()
         {
             try
             {
@@ -63,11 +63,11 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             }
             catch (Exception err)
             {
-                throw new Exception("Error al terminar la transacción con la Base de Datos.", err);
+                throw new Exception("Error al Terminar la transacción con la Base de Datos.", err);
             }
         }
 
-        public void cancelarTransaccion()
+        public void CancelarTransaccion()
         {
             try
             {
@@ -76,11 +76,11 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             }
             catch (Exception err)
             {
-                throw new Exception("Error al cancelar la transacción con la Base de Datos.", err);
+                throw new Exception("Error al Cancelar la transacción con la Base de Datos.", err);
             }
         }
 
-        public SqlDataReader ejecutarConsulta(String sentenciaSQL)
+        public SqlDataReader EjecutarConsulta(String sentenciaSQL)
         {
             try
             {
@@ -97,7 +97,24 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             }
         }
 
-        public SqlCommand obtenerComandoSQL(String sentenciaSQL)
+        public SqlDataReader EjecutarConsultaDeProcedimientoAlmacenado(String procedimientoAlmacenado)
+        {
+            try
+            {
+                SqlCommand comandoSQL = conexion.CreateCommand();
+                if (transaccion != null)
+                    comandoSQL.Transaction = transaccion;
+                comandoSQL.CommandText = procedimientoAlmacenado;
+                comandoSQL.CommandType = CommandType.StoredProcedure;
+                return comandoSQL.ExecuteReader();
+            }
+            catch (Exception err)
+            {
+                throw new Exception("Error al ejecutar consulta en la Base de Datos.", err);
+            }
+        }
+
+        public SqlCommand ObtenerComandoSQL(String sentenciaSQL)
         {
             try
             {
@@ -114,7 +131,7 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             }
         }
 
-        public SqlCommand obtenerComandoDeProcedimiento(String procedimientoAlmacenado)
+        public SqlCommand ObtenerComandoDeProcedimiento(String procedimientoAlmacenado)
         {
             try
             {

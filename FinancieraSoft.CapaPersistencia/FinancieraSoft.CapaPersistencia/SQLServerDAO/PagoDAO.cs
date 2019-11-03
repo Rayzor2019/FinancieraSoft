@@ -18,7 +18,7 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             this.gestorSQL = gestorSQL;
         }
 
-        public void guardar(Pago pago)
+        public void Guardar(Pago pago)
         {
             // CREANDO LAS SENTENCIAS SQL
             string insertarPagoSQL;
@@ -29,13 +29,13 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             {
                 SqlCommand comando;
                 // GUARDANDO EL OBJETO Pago
-                comando = gestorSQL.obtenerComandoSQL(insertarPagoSQL);
+                comando = gestorSQL.ObtenerComandoDeProcedimiento(insertarPagoSQL);
                 comando.Parameters.AddWithValue("@coutaID", pago.Cuota.CuotaID);
                 comando.Parameters.AddWithValue("@idpago", pago.PagoID);
                 comando.Parameters.AddWithValue("@diasmora", pago.DiasMora);
                 comando.Parameters.AddWithValue("@montototal", pago.MontoTotal);
                 comando.ExecuteNonQuery();
-                actualizarEstadoCuota(pago.Cuota);
+                ActualizarEstadoCuota(pago.Cuota);
             }
             catch (Exception err)
             {
@@ -43,21 +43,20 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             }
         }
 
-        public void actualizarEstadoCuota(Cuota cuota)
+        public void ActualizarEstadoCuota(Cuota cuota)
         {
             string updateSQL = "update cuota" +
                                "set estado = 'Pagado'" +
                                "where cuotaID = '"+ cuota.CuotaID + "'";
-
             try
             {
                 SqlCommand comando;
-                comando = gestorSQL.obtenerComandoSQL(updateSQL);
+                comando = gestorSQL.ObtenerComandoSQL(updateSQL);
                 comando.ExecuteNonQuery();
             }
             catch (Exception err)
             {
-                throw err;
+                throw new Exception("Ocurrio un problema al intentar actualizar la cuota", err);
             }
         }
     }

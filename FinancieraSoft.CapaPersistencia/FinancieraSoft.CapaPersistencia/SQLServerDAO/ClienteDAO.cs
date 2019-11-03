@@ -15,16 +15,16 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
         {
             this.gestorSQL = gestorSQL;
         }
-        public Cliente buscarPorDni(string dni)
+        public Cliente Buscar(string dni)
         {
             Cliente cliente;
             string consultaSQL = "select * from cliente where dni ='" + dni + "'";
             try
             {
-                SqlDataReader resultadoSQL = gestorSQL.ejecutarConsulta(consultaSQL);
+                SqlDataReader resultadoSQL = gestorSQL.EjecutarConsulta(consultaSQL);
                 if (resultadoSQL.Read())
                 {
-                    cliente = obtenerCliente(resultadoSQL);
+                    cliente = ObtenerCliente(resultadoSQL);
                 }
                 else
                 {
@@ -38,7 +38,7 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             return cliente;
         }
 
-        public Cliente obtenerCliente(SqlDataReader resultadoSQL)
+        public Cliente ObtenerCliente(SqlDataReader resultadoSQL)
         {
             Cliente cliente = new Cliente();
             cliente.Codigo = resultadoSQL.GetString(0);

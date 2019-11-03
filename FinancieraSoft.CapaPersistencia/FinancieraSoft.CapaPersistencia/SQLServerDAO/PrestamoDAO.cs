@@ -17,7 +17,7 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             this.gestorSQL = gestorSQL;
         }
 
-        public void guardar(Prestamo prestamo)
+        public void Guardar(Prestamo prestamo)
         {
             // CREANDO LAS SENTENCIAS SQL
             string insertarPrestamoSQL, insertarCuotaSQL;
@@ -30,7 +30,7 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             {
                 SqlCommand comando;
                 // GUARDANDO EL OBJETO Prestamo               
-                comando = gestorSQL.obtenerComandoSQL(insertarPrestamoSQL);
+                comando = gestorSQL.ObtenerComandoDeProcedimiento(insertarPrestamoSQL);
                 comando.Parameters.AddWithValue("@codigoCliente", prestamo.Cliente.Codigo);
                 comando.Parameters.AddWithValue("@montoPrestado", prestamo.MontoPrestado);
                 comando.Parameters.AddWithValue("@tasaEfectivaAnual", prestamo.TasaEfectivaAnual);
@@ -44,7 +44,7 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
                 foreach (Cuota cuota in prestamo.ListaCuotas)
                 {
                     // Agregando una couta del Prestamo
-                    comando = gestorSQL.obtenerComandoSQL(insertarCuotaSQL);
+                    comando = gestorSQL.ObtenerComandoDeProcedimiento(insertarCuotaSQL);
                     comando.Parameters.AddWithValue("@prestamoID", cuota.Prestamo.PrestamoID);
                     comando.Parameters.AddWithValue("@saldo", cuota.Saldo);
                     comando.Parameters.AddWithValue("@fecha", cuota.Fecha);
@@ -59,23 +59,40 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             {
                 throw new Exception("Ocurrio un problema al intentar guardar.", err);
             }
-
         }
 
-        public Prestamo buscarPrestamo(Cliente cliente)
+        public bool TieneDeudaPendiente(Prestamo prestamo)
+        {
+            string consultaSQL = "select estado from cuota where prestamoID ='" + prestamo.PrestamoID + "'";
+            SqlDataReader resultadoSQL = gestorSQL.EjecutarConsulta(consultaSQL);
+            string estado;
+            bool tieneDeuda = true;
+            while(resultadoSQL.Read())
+            {
+               estado = resultadoSQL["estado"].ToString();
+                if (estado != "Pagado")
+                {
+                    tieneDeuda = false;
+                }
+            }
+            return tieneDeuda;
+        }
+
+        public Prestamo BuscarPrestamo(Cliente cliente)
         {
             Prestamo prestamo;
-            string consultaSQL = "select * from prestamo where codigoCliente ='" + cliente.Codigo + "'";
+            string consultaSQL = "select top 1 * from prestamo where codigoCliente ='" + cliente.Codigo + "'"
+                                +"ORDER BY fechaPrestamo DESC";
             try
             {
-                SqlDataReader resultadoSQL = gestorSQL.ejecutarConsulta(consultaSQL);
+                SqlDataReader resultadoSQL = gestorSQL.EjecutarConsulta(consultaSQL);
                 if (resultadoSQL.Read())
                 {
                     prestamo = obtenerPrestamo(resultadoSQL,cliente);
                 }
                 else
                 {
-                    throw new Exception("El cliente no tiene un prestamo pendiente");
+                    throw new Exception("El cliente no tiene un historial de prestamos");
                 }
             }
             catch (Exception err)
@@ -109,32 +126,25 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             string consultaSQL = "select * from couta where prestamoid ='" + prestamoID + "'";
             try
             {
-                SqlDataReader resultadoConsultaSQL = gestorSQL.ejecutarConsulta(consultaSQL);
-                while(resultadoConsultaSQL.HasRows)
+                SqlDataReader resultadoConsultaSQL = gestorSQL.EjecutarConsulta(consultaSQL);
+                while(resultadoConsultaSQL.Read())
                 {
-                    if (resultadoConsultaSQL.Read())
-                    {
-                        cuota = obtenerCuota(resultadoConsultaSQL);
-                        listaDeCuotas.Add(cuota);
-                    }
-                    else
-                    {
-                        throw new Exception("Hubo un error al procesar una de las cuotas");
-                    }
+                   cuota = ObtenerCuota(resultadoConsultaSQL);
+                   listaDeCuotas.Add(cuota);
                 }
             }
             catch (Exception err)
             {
-                throw err;
+                throw new Exception("Hubo un error al procesar una de las cuotas",err);
             }
 
             //Instanciar el OBJETO prestamo
-            prestamo = new Prestamo(prestamoID, montoPrestado, tasaEfectivaAnual, totalPeriodosPago, tasaEfectivaMensual, fechaPrestamo, cuotaFijaMensual, cliente, listaCuotas);
+            prestamo = new Prestamo(prestamoID, montoPrestado, tasaEfectivaAnual, totalPeriodosPago, tasaEfectivaMensual, fechaPrestamo, cuotaFijaMensual, cliente, listaDeCuotas);
             
             return prestamo;
         }
 
-        public Cuota obtenerCuota(SqlDataReader resultadoConsultaSQL)
+        public Cuota ObtenerCuota(SqlDataReader resultadoConsultaSQL)
         {
             Cuota cuota;
 
