@@ -5,16 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using FinancieraSoft.CapaDominio.Entidades;
+using FinancieraSoft.CapaDominio.Contratos;
 
 namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
 {
-    class PrestamoDAO
+    class PrestamoDAO : IPrestamoDAO
     {
-        private GestorSQL gestorSQL;
+        private GestorDAO gestorDAO;
 
-        public PrestamoDAO(GestorSQL gestorSQL)
+        public PrestamoDAO(IGestorDAO gestorDAO)
         {
-            this.gestorSQL = gestorSQL;
+            this.gestorDAO = (GestorDAO)gestorDAO;
         }
 
         public void Guardar(Prestamo prestamo)
@@ -30,7 +31,7 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             {
                 SqlCommand comando;
                 // GUARDANDO EL OBJETO Prestamo               
-                comando = gestorSQL.ObtenerComandoDeProcedimiento(insertarPrestamoSQL);
+                comando = gestorDAO.ObtenerComandoDeProcedimiento(insertarPrestamoSQL);
                 comando.Parameters.AddWithValue("@codigoCliente", prestamo.Cliente.Codigo);
                 comando.Parameters.AddWithValue("@montoPrestado", prestamo.MontoPrestado);
                 comando.Parameters.AddWithValue("@tasaEfectivaAnual", prestamo.TasaEfectivaAnual);
@@ -43,8 +44,8 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
                 // GUARDANDO LOS OBJETOS Cuotas
                 foreach (Cuota cuota in prestamo.ListaCuotas)
                 {
-                    // Agregando una couta del Prestamo
-                    comando = gestorSQL.ObtenerComandoDeProcedimiento(insertarCuotaSQL);
+                    // Agregando la couta
+                    comando = gestorDAO.ObtenerComandoDeProcedimiento(insertarCuotaSQL);
                     comando.Parameters.AddWithValue("@prestamoID", cuota.Prestamo.PrestamoID);
                     comando.Parameters.AddWithValue("@periodo",cuota.Periodo);
                     comando.Parameters.AddWithValue("@saldo", cuota.Saldo);
@@ -65,7 +66,7 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
         public bool TieneDeudaPendiente(Prestamo prestamo)
         {
             string consultaSQL = "select estado from cuota where prestamoID ='" + prestamo.PrestamoID + "'";
-            SqlDataReader resultadoSQL = gestorSQL.EjecutarConsulta(consultaSQL);
+            SqlDataReader resultadoSQL = gestorDAO.EjecutarConsulta(consultaSQL);
             string estado;
             bool tieneDeuda = true;
             while(resultadoSQL.Read())
@@ -86,10 +87,10 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
                                 +"ORDER BY fechaPrestamo DESC";
             try
             {
-                SqlDataReader resultadoSQL = gestorSQL.EjecutarConsulta(consultaSQL);
+                SqlDataReader resultadoSQL = gestorDAO.EjecutarConsulta(consultaSQL);
                 if (resultadoSQL.Read())
                 {
-                    prestamo = obtenerPrestamo(resultadoSQL,cliente);
+                    prestamo = ObtenerPrestamo(resultadoSQL,cliente);
                 }
                 else
                 {
@@ -103,7 +104,7 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             return prestamo;
         }
 
-        public Prestamo obtenerPrestamo(SqlDataReader resultadoSQL, Cliente cliente)
+        public Prestamo ObtenerPrestamo(SqlDataReader resultadoSQL, Cliente cliente)
         {
             //Creando variables locales para instanciar el objeto Prestamo al buscarlo en la DB;
             string prestamoID;
@@ -127,7 +128,7 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             string consultaSQL = "select * from couta where prestamoid ='" + prestamoID + "'";
             try
             {
-                SqlDataReader resultadoConsultaSQL = gestorSQL.EjecutarConsulta(consultaSQL);
+                SqlDataReader resultadoConsultaSQL = gestorDAO.EjecutarConsulta(consultaSQL);
                 while(resultadoConsultaSQL.Read())
                 {
                    cuota = ObtenerCuota(resultadoConsultaSQL);

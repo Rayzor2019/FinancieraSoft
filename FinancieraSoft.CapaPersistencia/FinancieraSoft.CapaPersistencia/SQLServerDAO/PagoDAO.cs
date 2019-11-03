@@ -5,17 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using FinancieraSoft.CapaDominio.Entidades;
+using FinancieraSoft.CapaDominio.Contratos;
 
 namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
 {
-    class PagoDAO
+    class PagoDAO : IPagoDAO
     {
 
-        private GestorSQL gestorSQL;
+        private GestorDAO gestorDAO;
 
-        public PagoDAO(GestorSQL gestorSQL)
+        public PagoDAO(IGestorDAO gestorDAO)
         {
-            this.gestorSQL = gestorSQL;
+            this.gestorDAO = (GestorDAO)gestorDAO;
         }
 
         public void Guardar(Pago pago)
@@ -29,7 +30,7 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             {
                 SqlCommand comando;
                 // GUARDANDO EL OBJETO Pago
-                comando = gestorSQL.ObtenerComandoDeProcedimiento(insertarPagoSQL);
+                comando = gestorDAO.ObtenerComandoDeProcedimiento(insertarPagoSQL);
                 comando.Parameters.AddWithValue("@coutaID", pago.Cuota.CuotaID);
                 comando.Parameters.AddWithValue("@idpago", pago.PagoID);
                 comando.Parameters.AddWithValue("@diasmora", pago.DiasMora);
@@ -51,7 +52,7 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             try
             {
                 SqlCommand comando;
-                comando = gestorSQL.ObtenerComandoSQL(updateSQL);
+                comando = gestorDAO.ObtenerComandoSQL(updateSQL);
                 comando.ExecuteNonQuery();
             }
             catch (Exception err)

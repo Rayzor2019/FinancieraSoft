@@ -45,5 +45,15 @@
     <Compile Include="Servicios\GenerarPrestamoServicio.cs" />
     <Compile Include="Servicios\PagarCuotaServicio.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\FinancieraSoft.CapaDominio\FinancieraSoft.CapaDominio\FinancieraSoft.CapaDominio.csproj">
+      <Project>{369b10e1-8a39-4643-8dd1-508a1bf0453d}</Project>
+      <Name>FinancieraSoft.CapaDominio</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FinancieraSoft.CapaPersistencia\FinancieraSoft.CapaPersistencia\FinancieraSoft.CapaPersistencia.csproj">
+      <Project>{519e1d43-278c-4969-bb0e-d4c9dd3c0a05}</Project>
+      <Name>FinancieraSoft.CapaPersistencia</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

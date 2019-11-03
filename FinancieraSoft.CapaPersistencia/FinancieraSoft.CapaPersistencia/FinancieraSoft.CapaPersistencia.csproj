@@ -41,9 +41,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FabricaDAO\FabricaAbstractaDAO.cs" />
+    <Compile Include="FabricaDAO\FabricaDAO_SQLServer.cs" />
+    <Compile Include="FabricaDAO\ClaseFabricaDAO.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ClaseFabricaDAO.settings</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQLServerDAO\ClienteDAO.cs" />
-    <Compile Include="SQLServerDAO\GestorSQL.cs" />
+    <Compile Include="SQLServerDAO\GestorDAO.cs" />
     <Compile Include="SQLServerDAO\PagoDAO.cs" />
     <Compile Include="SQLServerDAO\PrestamoDAO.cs" />
   </ItemGroup>
@@ -52,6 +59,13 @@
       <Project>{369b10e1-8a39-4643-8dd1-508a1bf0453d}</Project>
       <Name>FinancieraSoft.CapaDominio</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="FabricaDAO\ClaseFabricaDAO.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ClaseFabricaDAO.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

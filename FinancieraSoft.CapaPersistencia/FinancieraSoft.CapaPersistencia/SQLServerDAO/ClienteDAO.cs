@@ -5,15 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using FinancieraSoft.CapaDominio.Entidades;
 using System.Data.SqlClient;
+using FinancieraSoft.CapaDominio.Contratos;
 
 namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
 {
-    class ClienteDAO
+    class ClienteDAO : IClienteDAO
     {
-        private GestorSQL gestorSQL;
-        public ClienteDAO(GestorSQL gestorSQL)
+        private GestorDAO gestorDAO;
+        public ClienteDAO(IGestorDAO gestorDAO)
         {
-            this.gestorSQL = gestorSQL;
+            this.gestorDAO = (GestorDAO)gestorDAO;
         }
         public Cliente Buscar(string dni)
         {
@@ -21,7 +22,7 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             string consultaSQL = "select * from cliente where dni ='" + dni + "'";
             try
             {
-                SqlDataReader resultadoSQL = gestorSQL.EjecutarConsulta(consultaSQL);
+                SqlDataReader resultadoSQL = gestorDAO.EjecutarConsulta(consultaSQL);
                 if (resultadoSQL.Read())
                 {
                     cliente = ObtenerCliente(resultadoSQL);

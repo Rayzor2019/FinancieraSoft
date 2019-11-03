@@ -1,14 +1,15 @@
-﻿using System;
+﻿using FinancieraSoft.CapaDominio.Contratos;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.SqlClient;
-using System.Data;
 
 namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
 {
-    public class GestorSQL
+    public class GestorDAO : IGestorDAO
     {
         private SqlConnection conexion;
         private SqlTransaction transaccion;
@@ -149,4 +150,3 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
         }
     }
 }
-
