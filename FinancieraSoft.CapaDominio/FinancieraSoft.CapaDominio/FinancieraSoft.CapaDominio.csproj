@@ -43,6 +43,14 @@
   <ItemGroup>
     <Compile Include="Entidades\Cliente.cs" />
     <Compile Include="Entidades\Cuota.cs" />
+    <Compile Include="Entidades\EstrategiaMora\ClaseEstrategiaMora.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ClaseEstrategiaMora.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Entidades\EstrategiaMora\EstrategiaMoraCero.cs" />
+    <Compile Include="Entidades\EstrategiaMora\FabricaEstrategiaMora.cs" />
+    <Compile Include="Entidades\EstrategiaMora\IEstrategiaMora.cs" />
     <Compile Include="Entidades\Pago.cs" />
     <Compile Include="Entidades\Prestamo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -51,6 +59,16 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Contratos\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entidades\EstrategiaMora\EstrategiaMoraPorDia.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Entidades\EstrategiaMora\ClaseEstrategiaMora.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ClaseEstrategiaMora.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

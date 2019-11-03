@@ -46,6 +46,7 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
                     // Agregando una couta del Prestamo
                     comando = gestorSQL.ObtenerComandoDeProcedimiento(insertarCuotaSQL);
                     comando.Parameters.AddWithValue("@prestamoID", cuota.Prestamo.PrestamoID);
+                    comando.Parameters.AddWithValue("@periodo",cuota.Periodo);
                     comando.Parameters.AddWithValue("@saldo", cuota.Saldo);
                     comando.Parameters.AddWithValue("@fecha", cuota.Fecha);
                     comando.Parameters.AddWithValue("@amortizacion", cuota.Amortizacion);
