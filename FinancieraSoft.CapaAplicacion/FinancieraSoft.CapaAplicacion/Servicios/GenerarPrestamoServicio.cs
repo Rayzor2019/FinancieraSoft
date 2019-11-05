@@ -45,9 +45,11 @@ namespace FinancieraSoft.CapaAplicacion.Servicios
         {
             PrestamoServicio prestamoServicio = new PrestamoServicio();
             prestamoServicio.VerificarDatosPrestamo(prestamo);
+            gestorDAO.AbrirConexion();
             gestorDAO.IniciarTransaccion();
             prestamoDAO.Guardar(prestamo);
             gestorDAO.TerminarTransaccion();
+            gestorDAO.CerrarConexion();
         }
     }
 }

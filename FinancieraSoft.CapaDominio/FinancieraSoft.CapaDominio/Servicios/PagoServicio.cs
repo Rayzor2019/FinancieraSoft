@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FinancieraSoft.CapaDominio.Servicios
 {
-    class PagoServicio
+    public class PagoServicio
     {
         public void ValidarVuelto(Pago pago, double montoRecibido)
         {

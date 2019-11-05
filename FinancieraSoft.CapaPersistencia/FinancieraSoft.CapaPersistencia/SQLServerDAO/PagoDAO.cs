@@ -26,13 +26,15 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
 
             insertarPagoSQL = "SP_GuardarPago";
 
+            string pagoID = GenerarPagoID();
+
             try
             {
                 SqlCommand comando;
                 // GUARDANDO EL OBJETO Pago
                 comando = gestorDAO.ObtenerComandoDeProcedimiento(insertarPagoSQL);
                 comando.Parameters.AddWithValue("@coutaID", pago.Cuota.CuotaID);
-                comando.Parameters.AddWithValue("@idpago", pago.PagoID);
+                comando.Parameters.AddWithValue("@idpago", pagoID);
                 comando.Parameters.AddWithValue("@diasmora", pago.DiasMora);
                 comando.Parameters.AddWithValue("@montototal", pago.MontoTotal);
                 comando.ExecuteNonQuery();
@@ -59,6 +61,43 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             {
                 throw new Exception("Ocurrio un problema al intentar actualizar la cuota", err);
             }
+        }
+
+        public string GenerarPagoID()
+        {
+            string pagoID = "";
+            int total = 0;
+            try
+            {
+                string consultaSQL = "Select count (*) from Pago";
+                SqlDataReader resultadoSQL = gestorDAO.EjecutarConsulta(consultaSQL);
+                if (resultadoSQL.Read())
+                {
+                    total = int.Parse(resultadoSQL.GetString(0));
+                }
+                resultadoSQL.Close();
+                if (total < 10)
+                {
+                    pagoID = "PAGO-0000" + total;
+                }
+                if (total < 100)
+                {
+                    pagoID = "PAGO-000" + total;
+                }
+                if (total < 1000)
+                {
+                    pagoID = "PAGO-00" + total;
+                }
+                if (total < 10000)
+                {
+                    pagoID = "PAGO-0" + total;
+                }
+            }
+            catch (Exception err)
+            {
+                throw new Exception("Hubo un error al generar el pagoID", err);
+            }
+            return pagoID;
         }
     }
 }

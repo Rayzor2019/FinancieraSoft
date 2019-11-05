@@ -23,7 +23,6 @@ namespace FinancieraSoft.CapaDominio.Entidades
 
         public Pago(Cuota cuota, IEstrategiaMora estrategiaMora)
         {
-            //this.pagoID = pagoID; Autogenerar
             diasMora = CalcularDiasMora();
             montoTotal = CalcularMontoTotal();
             this.cuota = cuota;

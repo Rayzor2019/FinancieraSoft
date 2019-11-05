@@ -30,7 +30,6 @@ namespace FinancieraSoft.CapaDominio.Entidades
 
         public Cuota(int periodo, double saldo, DateTime fecha, double amortizacion, double interes, Prestamo prestamo)
         {
-            //cuotaID = ; Autogenerar
             this.periodo = periodo;
             this.saldo = saldo;
             this.fecha = fecha;

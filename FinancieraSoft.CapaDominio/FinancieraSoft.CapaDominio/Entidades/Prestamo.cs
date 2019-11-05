@@ -32,7 +32,6 @@ namespace FinancieraSoft.CapaDominio.Entidades
 
         public Prestamo(double montoPrestado, double tasaEfectivaAnual, int totalPeriodosPago, Cliente cliente)
         {
-            //prestamoID = prestamoID; Autogenerar (con un metodo)
             this.montoPrestado = montoPrestado;
             this.tasaEfectivaAnual = tasaEfectivaAnual;
             this.totalPeriodosPago = totalPeriodosPago;

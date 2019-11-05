@@ -27,12 +27,16 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
 
             insertarCuotaSQL = "SP_InsertarCuota";
 
+            string prestamoID = GenerarPrestamoID();
+            string cuotaID = GenerarCuotaID();
+
             try
             {
                 SqlCommand comando;
                 // GUARDANDO EL OBJETO Prestamo               
                 comando = gestorDAO.ObtenerComandoDeProcedimiento(insertarPrestamoSQL);
                 comando.Parameters.AddWithValue("@codigoCliente", prestamo.Cliente.Codigo);
+                comando.Parameters.AddWithValue("@prestamoID", prestamoID;
                 comando.Parameters.AddWithValue("@montoPrestado", prestamo.MontoPrestado);
                 comando.Parameters.AddWithValue("@tasaEfectivaAnual", prestamo.TasaEfectivaAnual);
                 comando.Parameters.AddWithValue("@totalPeriodosPago", prestamo.TotalPeriodosPago);
@@ -46,8 +50,9 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
                 {
                     // Agregando la couta
                     comando = gestorDAO.ObtenerComandoDeProcedimiento(insertarCuotaSQL);
-                    comando.Parameters.AddWithValue("@prestamoID", cuota.Prestamo.PrestamoID);
-                    comando.Parameters.AddWithValue("@periodo",cuota.Periodo);
+                    comando.Parameters.AddWithValue("@prestamoID", prestamoID);
+                    comando.Parameters.AddWithValue("@cuotaID", cuotaID);
+                    comando.Parameters.AddWithValue("@periodo", cuota.Periodo);
                     comando.Parameters.AddWithValue("@saldo", cuota.Saldo);
                     comando.Parameters.AddWithValue("@fecha", cuota.Fecha);
                     comando.Parameters.AddWithValue("@amortizacion", cuota.Amortizacion);
@@ -69,9 +74,9 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             SqlDataReader resultadoSQL = gestorDAO.EjecutarConsulta(consultaSQL);
             string estado;
             bool tieneDeuda = true;
-            while(resultadoSQL.Read())
+            while (resultadoSQL.Read())
             {
-               estado = resultadoSQL["estado"].ToString();
+                estado = resultadoSQL["estado"].ToString();
                 if (estado != "Pagado")
                 {
                     tieneDeuda = false;
@@ -84,13 +89,13 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
         {
             Prestamo prestamo;
             string consultaSQL = "select top 1 * from prestamo where codigoCliente ='" + cliente.Codigo + "'"
-                                +"ORDER BY fechaPrestamo DESC";
+                                + "ORDER BY fechaPrestamo DESC";
             try
             {
                 SqlDataReader resultadoSQL = gestorDAO.EjecutarConsulta(consultaSQL);
                 if (resultadoSQL.Read())
                 {
-                    prestamo = ObtenerPrestamo(resultadoSQL,cliente);
+                    prestamo = ObtenerPrestamo(resultadoSQL, cliente);
                 }
                 else
                 {
@@ -109,7 +114,7 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             //Creando variables locales para instanciar el objeto Prestamo al buscarlo en la DB;
             string prestamoID;
             double montoPrestado, tasaEfectivaAnual, tasaEfectivaMensual, cuotaFijaMensual;
-            int totalPeriodosPago;            
+            int totalPeriodosPago;
             DateTime fechaPrestamo;
             Prestamo prestamo;
             List<Cuota> listaDeCuotas = new List<Cuota>();
@@ -129,20 +134,20 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             try
             {
                 SqlDataReader resultadoConsultaSQL = gestorDAO.EjecutarConsulta(consultaSQL);
-                while(resultadoConsultaSQL.Read())
+                while (resultadoConsultaSQL.Read())
                 {
-                   cuota = ObtenerCuota(resultadoConsultaSQL);
-                   listaDeCuotas.Add(cuota);
+                    cuota = ObtenerCuota(resultadoConsultaSQL);
+                    listaDeCuotas.Add(cuota);
                 }
             }
             catch (Exception err)
             {
-                throw new Exception("Hubo un error al procesar una de las cuotas",err);
+                throw new Exception("Hubo un error al procesar una de las cuotas", err);
             }
 
             //Instanciar el OBJETO prestamo
             prestamo = new Prestamo(prestamoID, montoPrestado, tasaEfectivaAnual, totalPeriodosPago, tasaEfectivaMensual, fechaPrestamo, cuotaFijaMensual, cliente, listaDeCuotas);
-            
+
             return prestamo;
         }
 
@@ -173,5 +178,74 @@ namespace FinancieraSoft.CapaPersistencia.SQLServerDAO
             return cuota;
         }
 
+        public string GenerarPrestamoID()
+        {
+            string prestamoID = "";
+            int total = 0;
+            try
+            {
+                string consultaSQL = "Select count (*) from Prestamo";
+                SqlDataReader resultadoSQL = gestorDAO.EjecutarConsulta(consultaSQL);
+                if (resultadoSQL.Read())
+                {
+                    total = int.Parse(resultadoSQL.GetString(0));
+                }
+                resultadoSQL.Close();
+                if (total < 10)
+                {
+                    prestamoID = "PRES-000" + total;
+                }
+                if (total < 100)
+                {
+                    prestamoID = "PRES-00" + total;
+                }
+                if (total < 1000)
+                {
+                    prestamoID = "PRES-0" + total;
+                }
+            }
+            catch (Exception err)
+            {
+                throw new Exception("Hubo un error al generar el prestamoID", err);
+            }
+            return prestamoID;
+        }
+
+        public string GenerarCuotaID()
+        {
+            string cuotaID = "";
+            int total = 0;
+            try
+            {
+                string consultaSQL = "Select count (*) from Cuota";
+                SqlDataReader resultadoSQL = gestorDAO.EjecutarConsulta(consultaSQL);
+                if (resultadoSQL.Read())
+                {
+                    total = int.Parse(resultadoSQL.GetString(0));
+                }
+                resultadoSQL.Close();
+                if (total < 10)
+                {
+                    cuotaID = "CUOTA-0000" + total;
+                }
+                if (total < 100)
+                {
+                    cuotaID = "CUOTA-000" + total;
+                }
+                if (total < 1000)
+                {
+                    cuotaID = "CUOTA-00" + total;
+                }
+                if (total < 10000)
+                {
+                    cuotaID = "CUOTA-0" + total;
+                }
+            }
+            catch (Exception err)
+            {
+                throw new Exception("Hubo un error al generar la cuotaID", err);
+            }
+            return cuotaID;
+        }
     }
 }
