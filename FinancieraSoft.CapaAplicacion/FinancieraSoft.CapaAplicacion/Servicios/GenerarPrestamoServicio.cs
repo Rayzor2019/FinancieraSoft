@@ -35,9 +35,8 @@ namespace FinancieraSoft.CapaAplicacion.Servicios
             return cliente;
         }
 
-        public void GenerarCronograma(double montoPrestado, double tasaEfectivaAnual, int totalPeriodosPago, Cliente cliente)
+        public void GenerarCronograma(Prestamo prestamo)
         {
-            Prestamo prestamo = new Prestamo(montoPrestado, tasaEfectivaAnual, totalPeriodosPago, cliente);
             prestamo.GenerarCronograma();
         }
 
